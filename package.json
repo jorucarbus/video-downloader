@@ -1,0 +1,31 @@
+{
+  "name": "video-downloader-editor",
+  "version": "0.0.1",
+  "description": "Video downloader & editor app for Farándula pipeline",
+  "author": "Jonathan Carvajal <jorucarbus@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "install": "npm install -w backend && npm install -w frontend",
+    "dev": "npm run dev -w frontend",
+    "server": "npm run dev -w backend",
+    "build": "npm run build -w frontend",
+    "build:all": "npm run build -w backend && npm run build -w frontend",
+    "test": "npm run test -w backend && npm run test -w frontend",
+    "test:e2e": "npm run test:e2e -w frontend",
+    "electron-dev": "npm run electron-dev -w frontend",
+    "electron-build": "npm run electron-build -w frontend",
+    "electron-build:all": "npm run electron-build:all -w frontend",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.3"
+  }
+}
