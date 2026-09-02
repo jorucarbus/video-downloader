@@ -65,7 +65,8 @@
       actualizado a la última versión, no resuelve. Pendiente: cookies de sesión válidas
       (`--cookies-from-browser` falló por DPAPI con el navegador abierto — cerrar navegador
       y reintentar, o exportar cookies a archivo Netscape)
-- [ ] Renderizar video básico (sin ediciones) (pendiente)
+- [x] Renderizar video con ediciones (trim + effects) → MP4 válido H264/AAC, duración exacta
+      (verificado 2026-09-01: recorte 0.5s→4s dio 3.500000s exacto)
 
 **Fin de Phase**: Video descargado → preview en UI
 
