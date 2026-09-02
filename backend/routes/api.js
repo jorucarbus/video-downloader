@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import path from 'path';
 import { downloadVideo, getMetadata } from '../lib/downloader.js';
 import { renderVideo, getRenderStatus } from '../lib/ffmpeg-renderer.js';
 import { transcribeAudio } from '../lib/whisper.js';
@@ -11,6 +12,10 @@ const router = Router();
 
 const asyncHandler = (fn) => (req, res, next) => fn(req, res, next).catch(next);
 
+// Convierte una ruta absoluta dentro de temp-videos/ a una URL servible por HTTP
+// (/media/<archivo>, ver server.js) — el navegador no puede cargar file:// directo.
+const toPreviewUrl = (filePath) => `/media/${path.basename(filePath)}`;
+
 // --- Download & Metadata ---
 
 router.post('/download', asyncHandler(async (req, res) => {
@@ -19,7 +24,7 @@ router.post('/download', asyncHandler(async (req, res) => {
 
   const { jobId, videoPath } = await downloadVideo(url);
   const metadata = await getMetadata(videoPath);
-  res.json({ jobId, videoPath, metadata });
+  res.json({ jobId, videoPath, previewUrl: toPreviewUrl(videoPath), metadata });
 }));
 
 router.get('/metadata/:jobId', asyncHandler(async (req, res) => {
@@ -40,7 +45,8 @@ router.post('/render-final', asyncHandler(async (req, res) => {
 router.get('/render-status/:jobId', (req, res) => {
   const status = getRenderStatus(req.params.jobId);
   if (!status) return res.status(404).json({ error: 'job no encontrado' });
-  res.json(status);
+  const previewUrl = status.outputPath ? toPreviewUrl(status.outputPath) : null;
+  res.json({ ...status, previewUrl });
 });
 
 // --- AI Analysis ---

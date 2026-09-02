@@ -21,6 +21,7 @@ export default function App() {
   const [tab, setTab] = useState('edit');
   const {
     videoPath,
+    previewUrl,
     metadata,
     edits,
     loadVideo,
@@ -52,6 +53,7 @@ export default function App() {
           <TimelineEditor metadata={metadata} edits={edits} onUpdateTrim={updateTrim} />
           <CanvasEditor
             videoPath={videoPath}
+            previewUrl={previewUrl}
             edits={edits}
             onUpdateEffect={updateEffect}
             onUpdateCrop={updateCrop}

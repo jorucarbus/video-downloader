@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
  */
 export function useVideoEditor() {
   const [videoPath, setVideoPath] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [metadata, setMetadata] = useState(null);
   const [edits, setEdits] = useState({
     trim: { start: 0, end: null },
@@ -17,8 +18,9 @@ export function useVideoEditor() {
     outputDimensions: '1080x1920',
   });
 
-  const loadVideo = useCallback((path, meta) => {
+  const loadVideo = useCallback((path, meta, preview) => {
     setVideoPath(path);
+    setPreviewUrl(preview ?? null);
     setMetadata(meta);
     setEdits((prev) => ({ ...prev, trim: { start: 0, end: meta?.duration ?? null } }));
   }, []);
@@ -53,6 +55,7 @@ export function useVideoEditor() {
 
   return {
     videoPath,
+    previewUrl,
     metadata,
     edits,
     loadVideo,

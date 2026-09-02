@@ -12,7 +12,7 @@ export default function DownloadPanel({ onDownloaded }) {
     setError(null);
     try {
       const { data } = await api.post('/download', { url });
-      onDownloaded(data.videoPath, data.metadata);
+      onDownloaded(data.videoPath, data.metadata, data.previewUrl);
     } catch (err) {
       setError(err?.response?.data?.error || 'Error al descargar video');
     } finally {
