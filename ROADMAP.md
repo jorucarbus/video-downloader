@@ -217,14 +217,23 @@
   - [ ] Presets: "1080x1920", "1920x1080", "Custom"
 
 ### Backend
-- [ ] **MediaPipe wrapper** (`backend/lib/mediapipe.js`)
-  - [ ] Detectar caras en frames del video
-  - [ ] Calcular bounding box promedio
-  - [ ] Retornar coordenadas para crop
+- [x] **MediaPipe wrapper** (`backend/lib/mediapipe.js`)
+  - [x] Detectar caras en frames del video (vía face-service local, Tasks API)
+  - [x] Calcular bounding box promedio
+  - [x] Retornar coordenadas para crop
 
-- [ ] Ruta API:
-  - [ ] `POST /api/detect-face` — MediaPipe analysis
-  - [ ] `POST /api/preview-orientation` — preview con nueva orientación
+- [x] Ruta API:
+  - [x] `POST /api/detect-face` — face-service (MediaPipe) analysis — **verificado end-to-end
+        2026-09-02**: video de prueba (cara real, imagen Lena) → 3 frames extraídos → 100%
+        confianza en cada uno → bounding box promediado correcto (x:195, y:219, 164x164)
+  - [ ] `POST /api/preview-orientation` — preview con nueva orientación (pendiente)
+
+⚠️ **Nota de instalación (2026-09-02)**: `mediapipe==0.10.14` (versión original del
+`requirements.txt`) no existe para Python 3.13 — se usa `0.10.35`. Además la API legacy
+`mp.solutions.face_detection` fue removida en todas las versiones disponibles para 3.13;
+`face-service/app.py` se reescribió con la Tasks API (`mediapipe.tasks.python.vision.
+FaceDetector`), que requiere descargar un modelo `.tflite` aparte (instrucciones en
+`face-service/README.md`, no versionado en git).
 
 ### Testing
 1. Video YouTube horizontal (1920x1080) ✓

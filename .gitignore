@@ -101,3 +101,9 @@ coverage/
 # History
 # ========================================
 .history/
+
+# ========================================
+# face-service (modelo .tflite descargable, no versionar)
+# ========================================
+face-service/models/
+face-service/venv/
