@@ -10,7 +10,12 @@ const execFileAsync = promisify(execFile);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TEMP_DIR = path.join(__dirname, '..', 'temp-videos');
 
-const ytDlpWrap = new YTDlpWrap.default();
+// yt-dlp-wrap no trae el binario empaquetado — busca 'yt-dlp' en PATH por default.
+// YTDLP_PATH permite apuntar a una instalación existente (ej. pip install yt-dlp
+// deja el .exe fuera del PATH en Windows).
+const ytDlpWrap = process.env.YTDLP_PATH
+  ? new YTDlpWrap.default(process.env.YTDLP_PATH)
+  : new YTDlpWrap.default();
 
 /**
  * Descarga un video desde cualquier URL soportada por yt-dlp.

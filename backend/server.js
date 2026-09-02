@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import './env.js'; // primer import: carga .env antes que cualquier módulo lo necesite
 import express from 'express';
 import cors from 'cors';
 import apiRoutes from './routes/api.js';
