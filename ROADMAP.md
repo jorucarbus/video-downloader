@@ -169,20 +169,36 @@
   - [ ] Panel para refinar timestamps
 
 ### Backend
-- [ ] **Whisper integration** (`backend/lib/whisper.js`)
-  - [ ] Extraer audio del video con FFmpeg
-  - [ ] Llamar API OpenAI Whisper
-  - [ ] Retornar transcripción con timestamps
+- [x] **Whisper integration** (`backend/lib/whisper.js`) — código completo, llamada real a la
+      API confirmada llegando (no es bug de conexión)
+  - [x] Extraer audio del video con FFmpeg (Whisper acepta el archivo directo, sin extracción
+        previa necesaria para wav/mp3)
+  - [x] Llamar API OpenAI Whisper
+  - [ ] Retornar transcripción con timestamps — **sin verificar contenido real**, ver bloqueo abajo
 
-- [ ] **Gemini integration** (`backend/lib/gemini.js`)
+- [x] **Gemini integration** (`backend/lib/gemini.js`) — código completo, sin probar en vivo
+      (depende de tener una transcripción real primero, bloqueado por Whisper)
   - [ ] Analizar transcripción
   - [ ] Detectar cambios de tema
   - [ ] Sugerir fragmentos interesantes (5-20s)
   - [ ] Retornar JSON con citas
 
-- [ ] Rutas API:
-  - [ ] `POST /api/analyze-audio` — Whisper + Gemini
+- [x] Rutas API:
+  - [x] `POST /api/analyze-audio` — código listo, bloqueado en pruebas por cuenta OpenAI sin
+        créditos (ver abajo)
   - [ ] `POST /api/refine-cites` — usuario ajusta timestamps
+
+⚠️ **BLOQUEADO (2026-09-02): cuenta OpenAI sin créditos.** `client.audio.transcriptions.create()`
+del SDK oficial daba `ECONNRESET` consistente en este entorno (Windows, Node 24) — probado con
+stream y con buffer, mismo resultado. Cambiando a `axios` + `form-data` (bypass del SDK) la
+llamada SÍ llega a la API y revela la causa real:
+`{"error":{"code":"credit_balance_exhausted","message":"You have no credits remaining..."}}`.
+**No es bug de código** — la cuenta de OpenAI (la del `OPENAI_API_KEY` en `.env`) necesita
+recarga en https://platform.openai.com/settings/organization/billing/. El SDK oficial
+probablemente cierra la conexión abruptamente al recibir el 429 en vez de devolver el body
+JSON del error (posible bug del SDK con fetch nativo en este entorno, pero irrelevante ahora
+que se sabe la causa real). **Una vez recargada la cuenta**, reintentar
+`POST /api/analyze-audio` — el resto de la cadena (extracción, llamada, parseo) está lista.
 
 ### Testing
 1. Video 2 minutos con cambios de tema ✓
