@@ -1,15 +1,17 @@
 import { google } from 'googleapis';
 import fs from 'fs';
 
+// OAuth2 (mismas credenciales que farandula-video-generator/insumos — reutilizadas
+// a propósito para no crear un service account nuevo). El refresh token ya trae
+// acceso autorizado a las carpetas compartidas.
 function getAuth() {
-  if (!process.env.GOOGLE_DRIVE_SERVICE_ACCOUNT) {
-    throw new Error('GOOGLE_DRIVE_SERVICE_ACCOUNT no configurada');
+  const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, GOOGLE_OAUTH_REFRESH_TOKEN } = process.env;
+  if (!GOOGLE_OAUTH_CLIENT_ID || !GOOGLE_OAUTH_CLIENT_SECRET || !GOOGLE_OAUTH_REFRESH_TOKEN) {
+    throw new Error('GOOGLE_OAUTH_CLIENT_ID / CLIENT_SECRET / REFRESH_TOKEN no configuradas');
   }
-  const credentials = JSON.parse(process.env.GOOGLE_DRIVE_SERVICE_ACCOUNT);
-  return new google.auth.GoogleAuth({
-    credentials,
-    scopes: ['https://www.googleapis.com/auth/drive'],
-  });
+  const client = new google.auth.OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET);
+  client.setCredentials({ refresh_token: GOOGLE_OAUTH_REFRESH_TOKEN });
+  return client;
 }
 
 /**
