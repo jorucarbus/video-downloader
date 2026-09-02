@@ -67,6 +67,10 @@
       y reintentar, o exportar cookies a archivo Netscape)
 - [x] Renderizar video con ediciones (trim + effects) → MP4 válido H264/AAC, duración exacta
       (verificado 2026-09-01: recorte 0.5s→4s dio 3.500000s exacto)
+- [x] **Batch refine end-to-end contra Drive real** (verificado 2026-09-02): carpeta temporal →
+      subir → listar → descargar → renderizar (trim+censura) → reemplazar (mismo fileId,
+      modifiedTime y tamaño cambiados) → limpieza. El caso de uso principal del proyecto
+      (refinar videos ya publicados en Drive sin duplicar) funciona de punta a punta.
 
 **Fin de Phase**: Video descargado → preview en UI
 
