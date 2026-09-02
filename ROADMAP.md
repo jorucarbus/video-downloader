@@ -9,51 +9,57 @@
 **Objetivo**: Boilerplate funcional + APIs básicas
 
 ### Backend
-- [ ] **Express server** en `backend/server.js`
-  - [ ] CORS + middleware básico
-  - [ ] Health endpoint (`GET /health`)
-  - [ ] Error handling global
+- [x] **Express server** en `backend/server.js`
+  - [x] CORS + middleware básico
+  - [x] Health endpoint (`GET /health`)
+  - [x] Error handling global
 
-- [ ] **Google Drive API integration** (`backend/lib/drive-sync.js`)
-  - [ ] Auth con service account
-  - [ ] Listar carpetas (Videos_Famosos_Carpetas)
-  - [ ] Upload/download básico
+- [x] **Google Drive API integration** (`backend/lib/drive-sync.js`)
+  - [x] Auth con service account
+  - [x] Listar carpetas (Videos_Famosos_Carpetas)
+  - [x] Upload/download básico
+  - [x] Replace (overwrite) — para batch refine de videos ya publicados
 
-- [ ] **yt-dlp wrapper** (`backend/lib/downloader.js`)
-  - [ ] Detectar tipo de URL
-  - [ ] Descargar a `/temp-videos/`
-  - [ ] Manejo de errores
+- [x] **yt-dlp wrapper** (`backend/lib/downloader.js`)
+  - [x] Detectar tipo de URL (valida con `new URL()`)
+  - [x] Descargar a `/temp-videos/`
+  - [ ] Manejo de errores (pendiente: casos específicos yt-dlp, ver Testing)
 
-- [ ] **FFmpeg wrapper** (`backend/lib/ffmpeg-renderer.js`)
-  - [ ] FFprobe para metadata (duración, fps, resolución)
-  - [ ] Render básico (sin filtros)
+- [x] **FFmpeg wrapper** (`backend/lib/ffmpeg-renderer.js`)
+  - [x] FFprobe para metadata (duración, fps, resolución)
+  - [x] Render básico + filtros (crop, effects, shapes, censura, stickers fijos)
 
-- [ ] **Rutas API** (`backend/routes/api.js`)
-  - [ ] `POST /api/download` — descargar video
-  - [ ] `POST /api/render` — renderizar video básico
-  - [ ] `GET /api/status` — estado del servidor
+- [x] **Rutas API** (`backend/routes/api.js`)
+  - [x] `POST /api/download` — descargar video
+  - [x] `POST /api/render-final` — renderizar video con ediciones
+  - [x] `GET /health` — estado del servidor
 
 ### Frontend
-- [ ] **React + Electron setup** (create-react-app + electron-forge)
-  - [ ] Boilerplate
-  - [ ] Estructura de componentes
+- [x] **React + Electron setup** (Vite + electron-builder, no create-react-app/electron-forge)
+  - [x] Boilerplate
+  - [x] Estructura de componentes
 
-- [ ] **UI skeleton** (6 paneles principales)
-  - [ ] DownloadPanel (input URL)
-  - [ ] TimelineEditor (placeholder)
-  - [ ] CanvasEditor (placeholder)
-  - [ ] ShapesPanel (placeholder)
-  - [ ] AIAnalyzer (placeholder)
-  - [ ] ExportDialog (placeholder)
+- [x] **UI skeleton** (8 paneles — se agregaron StickersPanel y BatchEditor sobre los 6 originales)
+  - [x] DownloadPanel (input URL, funcional)
+  - [x] TimelineEditor (funcional)
+  - [x] CanvasEditor (funcional)
+  - [x] ShapesPanel (funcional — recuadros + censura)
+  - [x] StickersPanel (nuevo — PNG overlay fijo, sin tracking)
+  - [x] AIAnalyzer (funcional)
+  - [x] OrientationConverter (funcional — manual + auto vía face-service)
+  - [x] ExportDialog (funcional)
+  - [x] BatchEditor (nuevo — refine lote en Drive con replace)
 
-- [ ] **Conexión frontend ↔ backend**
-  - [ ] Axios setup
-  - [ ] Enviar URL a `/api/download`
-  - [ ] Mostrar preview de video descargado
+- [x] **Conexión frontend ↔ backend**
+  - [x] Axios setup (`frontend/src/utils/api.js`)
+  - [x] Enviar URL a `/api/download`
+  - [x] Mostrar preview de video descargado
 
 ### Testing
-- [ ] Descargar video de YouTube simple → visible en preview
-- [ ] Renderizar video básico (sin ediciones)
+- [x] Backend `/health` responde 200 (verificado 2026-09-01)
+- [x] Frontend renderiza los 8 paneles sin errores de consola (verificado 2026-09-01)
+- [ ] Descargar video real de YouTube → visible en preview (pendiente: falta correr con URL real)
+- [ ] Renderizar video básico (sin ediciones) (pendiente)
 
 **Fin de Phase**: Video descargado → preview en UI
 

@@ -11,7 +11,6 @@
     "frontend"
   ],
   "scripts": {
-    "install": "npm install -w backend && npm install -w frontend",
     "dev": "npm run dev -w frontend",
     "server": "npm run dev -w backend",
     "build": "npm run build -w frontend",

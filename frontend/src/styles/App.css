@@ -1,0 +1,150 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: #121212;
+  color: #eee;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #1c1c1c;
+  border-bottom: 1px solid #333;
+}
+
+.app-header h1 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.app-header nav button {
+  margin-left: 8px;
+  padding: 6px 12px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  color: #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.app-header nav button.active {
+  background: #3a7bd5;
+  color: #fff;
+  border-color: #3a7bd5;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+
+.panel {
+  background: #1c1c1c;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.panel h3 {
+  margin-top: 0;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #999;
+}
+
+.panel input,
+.panel select {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  color: #eee;
+  border-radius: 4px;
+}
+
+.panel button {
+  padding: 8px 14px;
+  background: #3a7bd5;
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.panel button:disabled {
+  background: #444;
+  cursor: not-allowed;
+}
+
+.preview-video {
+  width: 100%;
+  max-height: 300px;
+  background: #000;
+}
+
+.error {
+  color: #ff6b6b;
+  font-size: 13px;
+}
+
+.hint {
+  color: #777;
+  font-size: 12px;
+}
+
+.time-range {
+  display: flex;
+  gap: 8px;
+}
+
+.progress-bar {
+  position: relative;
+  height: 20px;
+  background: #2a2a2a;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progress-fill {
+  position: absolute;
+  height: 100%;
+  background: #3a7bd5;
+  transition: width 0.3s;
+}
+
+.progress-bar span {
+  position: relative;
+  z-index: 1;
+  font-size: 11px;
+  line-height: 20px;
+  padding-left: 6px;
+}
+
+.shapes-list,
+.stickers-list,
+.batch-file-list,
+.batch-log,
+.cites-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+
+.shapes-list li,
+.stickers-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid #2a2a2a;
+}
