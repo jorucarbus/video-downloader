@@ -58,7 +58,13 @@
 ### Testing
 - [x] Backend `/health` responde 200 (verificado 2026-09-01)
 - [x] Frontend renderiza los 8 paneles sin errores de consola (verificado 2026-09-01)
-- [ ] Descargar video real de YouTube → visible en preview (pendiente: falta correr con URL real)
+- [x] Descargar video real (URL directa) → archivo en disco + metadata correcta vía FFprobe
+      (verificado 2026-09-01: 5.76s, 1920x1080, 30fps)
+- [ ] Descargar de YouTube/TikTok específicamente — bloqueado por anti-bot de las plataformas
+      (429 en YouTube, error de extracción en TikTok pese a curl_cffi instalado). yt-dlp
+      actualizado a la última versión, no resuelve. Pendiente: cookies de sesión válidas
+      (`--cookies-from-browser` falló por DPAPI con el navegador abierto — cerrar navegador
+      y reintentar, o exportar cookies a archivo Netscape)
 - [ ] Renderizar video básico (sin ediciones) (pendiente)
 
 **Fin de Phase**: Video descargado → preview en UI
