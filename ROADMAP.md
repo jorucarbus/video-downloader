@@ -87,9 +87,15 @@
   - [ ] Trim handles (inicio/final)
   - [ ] Mostrar duración actual/total
 
-- [ ] **CanvasEditor** (`frontend/src/components/CanvasEditor.jsx`)
-  - [ ] Preview del video en canvas
-  - [ ] Mostrar resolución + orientación actual
+- [x] **CanvasEditor** (`frontend/src/components/CanvasEditor.jsx`)
+  - [x] Preview del video — **bug real encontrado y arreglado 2026-09-02**: usaba
+        `src="file://<ruta>"`, bloqueado por todos los navegadores (rompía la versión WEB
+        de la app por completo, solo Electron con flags especiales lo hubiera tolerado).
+        Fix: backend sirve `temp-videos/` por HTTP (`/media/*`, con `Accept-Ranges` para
+        seek); `/api/download` y `/api/render-status` devuelven `previewUrl` junto al
+        `videoPath`. Verificado en Browser real: `video.readyState=4`, dimensiones y
+        duración correctas, requests `206 Partial Content` confirmando seek funcional.
+  - [ ] Mostrar resolución + orientación actual (dato ya disponible en `metadata`, falta UI)
   - [ ] Botones para full-screen preview
 
 - [ ] **Effect Controls**
