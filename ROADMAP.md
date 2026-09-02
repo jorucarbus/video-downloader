@@ -288,14 +288,18 @@ FaceDetector`), que requiere descargar un modelo `.tflite` aparte (instrucciones
   - [ ] Abrir carpeta en Finder/Explorer
 
 ### Backend
-- [ ] `POST /api/render-final` — renderizado completo
-  - [ ] Aplicar todas las ediciones (trim, crop, effects, shapes)
-  - [ ] Codificar a MP4 (NVENC si available, libx264 fallback)
-  - [ ] Timeout 10 minutos
+- [x] `POST /api/render-final` — renderizado completo (verificado, ver Phase 1)
+  - [x] Aplicar ediciones (trim, effects, shapes) — verificado; crop aún sin probar aislado
+  - [x] Codificar a MP4 (libx264 — h264_nvenc listado como fallback en código, sin probar GPU)
+  - [ ] Timeout 10 minutos (no implementado explícitamente aún)
 
-- [ ] `POST /api/export-to-drive` — subir a Google Drive
-- [ ] `POST /api/export-local` — guardar localmente
-- [ ] `GET /api/recent-exports` — historial
+- [x] `POST /api/upload-drive` — subir a Google Drive (llamado `upload-drive`, no
+      `export-to-drive` como decía el plan original) — **verificado 2026-09-02**: subida real,
+      `driveId` + `driveUrl` devueltos, archivo confirmado en Drive y limpiado después
+- [x] `POST /api/export-local` — guardar localmente — **verificado 2026-09-02**: copia real de
+      2.8MB, archivo confirmado en disco
+- [x] `GET /api/recent-exports` — historial — **verificado**: ambos exports (drive + local)
+      quedaron registrados correctamente, orden más-reciente-primero
 
 ### Testing
 1. Editar video completamente ✓
