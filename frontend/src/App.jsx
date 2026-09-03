@@ -30,6 +30,7 @@ export default function App() {
     updateEffect,
     addShape,
     removeShape,
+    updateShapePosition,
     addSticker,
     removeSticker,
   } = useVideoEditor();
@@ -54,9 +55,12 @@ export default function App() {
           <CanvasEditor
             videoPath={videoPath}
             previewUrl={previewUrl}
+            metadata={metadata}
             edits={edits}
             onUpdateEffect={updateEffect}
             onUpdateCrop={updateCrop}
+            onUpdateShapePosition={updateShapePosition}
+            onRemoveShape={removeShape}
           />
           <ShapesPanel edits={edits} onAddShape={addShape} onRemoveShape={removeShape} />
           <StickersPanel edits={edits} onAddSticker={addSticker} onRemoveSticker={removeSticker} />

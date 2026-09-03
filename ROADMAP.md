@@ -138,22 +138,30 @@
 **Objetivo**: Recuadros + timeline sync + renderizado con formas
 
 ### Components
-- [ ] **ShapesPanel** (`frontend/src/components/ShapesPanel.jsx`)
-  - [ ] Botón "Agregar recuadro"
+- [x] **ShapesPanel** (`frontend/src/components/ShapesPanel.jsx`)
+  - [x] Botón "Agregar recuadro" (agrega con posición/tamaño default, se reposiciona en canvas)
   - [ ] Inspector de propiedades:
-    - [ ] Color de relleno + opacidad slider
-    - [ ] Borde: color, grosor, estilo
-    - [ ] Sombra: offset, blur, color
-    - [ ] Esquinas redondeadas
-    - [ ] Texto: contenido, fuente, tamaño, color
-  - [ ] Timeline sync: start time + end time para cada forma
+    - [ ] Color de relleno + opacidad slider (fijo en código, sin UI todavía)
+    - [ ] Borde: color, grosor, estilo (no implementado)
+    - [ ] Sombra: offset, blur, color (no implementado)
+    - [ ] Esquinas redondeadas (no implementado)
+    - [ ] Texto: contenido, fuente, tamaño, color (campo `text.content` existe en el modelo de
+          datos y FFmpeg lo renderiza vía `drawtext`, pero sin UI para editarlo todavía)
+  - [x] Timeline sync: start time + end time para cada forma
   - [ ] Presets guardables ("Dark box", "Highlight yellow", etc.)
 
-- [ ] **Shape Drawing on Canvas**
-  - [ ] Click en canvas → crear rectángulo
-  - [ ] Drag para mover/resize
-  - [ ] Delete shape
-  - [ ] Múltiples formas simultáneamente
+- [x] **Shape Drawing on Canvas — verificado end-to-end 2026-09-03** (Browser pane real)
+  - [ ] Click en canvas → crear rectángulo (hoy se agrega desde ShapesPanel con posición
+        default, no dibujando directo)
+  - [x] **Drag para mover** — `CanvasEditor.jsx` renderiza cada shape como overlay absoluto
+        sobre el `<video>`, escalado de píxeles reales↔pantalla (`metadata.width` vs
+        `clientWidth`). Verificado: overlay en posición inicial correcta (100px reales ×
+        escala = 12.8px pantalla en el viewport probado), drag de 50px/20px en pantalla movió
+        el shape exactamente esa proporción en píxeles reales, con clamp a los bordes del video.
+        **Resize no implementado** (solo mover, no cambiar ancho/alto arrastrando).
+  - [x] Delete shape — botón ✕ en el overlay mismo (además del que ya existía en la lista)
+  - [x] Múltiples formas simultáneamente — el `.map()` sobre `edits.shapes` ya lo soporta,
+        cada una con su propio drag handler independiente
 
 ### Backend
 - [ ] `POST /api/render-with-shapes` — FFmpeg con drawbox + drawtext

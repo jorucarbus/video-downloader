@@ -44,7 +44,7 @@ export default function ShapesPanel({ edits, onAddShape, onRemoveShape }) {
         ))}
       </ul>
       <p className="hint">
-        Ajusta posición (x, y, ancho, alto) editando el recuadro directamente en el canvas (drag futuro).
+        Arrastra el recuadro directamente sobre el video en Canvas para reposicionarlo.
       </p>
     </div>
   );

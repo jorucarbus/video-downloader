@@ -45,6 +45,16 @@ export function useVideoEditor() {
     setEdits((prev) => ({ ...prev, shapes: prev.shapes.filter((s) => s.id !== id) }));
   }, []);
 
+  // Actualiza x/y/width/height de un recuadro (drag/resize en el canvas).
+  const updateShapePosition = useCallback((id, propertiesPatch) => {
+    setEdits((prev) => ({
+      ...prev,
+      shapes: prev.shapes.map((s) =>
+        s.id === id ? { ...s, properties: { ...s.properties, ...propertiesPatch } } : s
+      ),
+    }));
+  }, []);
+
   const addSticker = useCallback((sticker) => {
     setEdits((prev) => ({ ...prev, stickers: [...prev.stickers, { id: uuidv4(), ...sticker }] }));
   }, []);
@@ -64,6 +74,7 @@ export function useVideoEditor() {
     updateEffect,
     addShape,
     removeShape,
+    updateShapePosition,
     addSticker,
     removeSticker,
   };
