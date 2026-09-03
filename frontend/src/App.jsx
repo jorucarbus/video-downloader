@@ -62,7 +62,12 @@ export default function App() {
             onUpdateShapePosition={updateShapePosition}
             onRemoveShape={removeShape}
           />
-          <ShapesPanel edits={edits} onAddShape={addShape} onRemoveShape={removeShape} />
+          <ShapesPanel
+            edits={edits}
+            onAddShape={addShape}
+            onRemoveShape={removeShape}
+            onUpdateShapeProperty={updateShapePosition}
+          />
           <StickersPanel edits={edits} onAddSticker={addSticker} onRemoveSticker={removeSticker} />
           <AIAnalyzer videoPath={videoPath} previewUrl={previewUrl} />
           <OrientationConverter videoPath={videoPath} onUpdateCrop={updateCrop} />

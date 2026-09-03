@@ -5,7 +5,7 @@ const SHAPE_TYPES = [
   { value: 'blur', label: 'Censura (bloque opaco)' },
 ];
 
-export default function ShapesPanel({ edits, onAddShape, onRemoveShape }) {
+export default function ShapesPanel({ edits, onAddShape, onRemoveShape, onUpdateShapeProperty }) {
   const [type, setType] = useState('blur');
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState(5);
@@ -37,14 +37,46 @@ export default function ShapesPanel({ edits, onAddShape, onRemoveShape }) {
 
       <ul className="shapes-list">
         {edits.shapes.map((s) => (
-          <li key={s.id}>
-            {s.type} [{s.timeline.startTime}s - {s.timeline.endTime}s]
-            <button onClick={() => onRemoveShape(s.id)}>✕</button>
+          <li key={s.id} className="shape-item">
+            <div className="shape-item-row">
+              <span>
+                {s.type} [{s.timeline.startTime}s - {s.timeline.endTime}s]
+              </span>
+              <button onClick={() => onRemoveShape(s.id)}>✕</button>
+            </div>
+            {s.type === 'box' && (
+              <div className="shape-item-inspector">
+                <label>
+                  Color
+                  <input
+                    type="color"
+                    value={s.properties.fillColor?.startsWith('#') ? s.properties.fillColor : '#000000'}
+                    onChange={(e) =>
+                      onUpdateShapeProperty(s.id, { fillColor: e.target.value })
+                    }
+                  />
+                </label>
+                <label>
+                  Opacidad {Math.round((s.properties.fillOpacity ?? 1) * 100)}%
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={s.properties.fillOpacity ?? 1}
+                    onChange={(e) =>
+                      onUpdateShapeProperty(s.id, { fillOpacity: parseFloat(e.target.value) })
+                    }
+                  />
+                </label>
+              </div>
+            )}
           </li>
         ))}
       </ul>
       <p className="hint">
-        Arrastra el recuadro directamente sobre el video en Canvas para reposicionarlo.
+        Arrastra el recuadro directamente sobre el video en Canvas para reposicionarlo y
+        redimensionarlo. La censura (bloque opaco) siempre es negra sólida por diseño.
       </p>
     </div>
   );

@@ -16,6 +16,16 @@ export const renderJobs = new Map();
 
 const RENDER_TIMEOUT_MS = 10 * 60 * 1000; // 10 min — evita procesos ffmpeg colgados indefinidamente
 
+// FFmpeg espera colores hex como "0xRRGGBB", no "#RRGGBB" (formato que devuelven
+// los <input type="color"> del navegador). Los nombres de color (ej. "black",
+// "red") pasan sin tocar.
+function toFFmpegColor(color) {
+  if (typeof color === 'string' && color.startsWith('#')) {
+    return '0x' + color.slice(1);
+  }
+  return color;
+}
+
 /**
  * Construye el filter_complex de FFmpeg a partir de edits.
  * Soporta: crop, effects (brightness/contrast/saturation),
@@ -49,14 +59,19 @@ function buildFilters(edits = {}) {
           `drawbox=x=${x}:y=${y}:w=${width}:h=${height}:color=black:thickness=fill:enable='${enable}'`
         );
       } else {
+        // drawbox no tiene parámetro 'alpha' propio (a diferencia de drawtext) — la opacidad
+        // va pegada al color con @ (ej. "0xff0000@0.7"). Bug real encontrado probando esto:
+        // 'alpha' como opción separada da "Option not found" y aborta el render entero.
+        const color = toFFmpegColor(shape.properties.fillColor) || 'black';
+        const opacity = shape.properties.fillOpacity ?? 1;
         filters.push(
-          `drawbox=x=${x}:y=${y}:w=${width}:h=${height}:color=${shape.properties.fillColor || 'black'}:thickness=fill:alpha=${shape.properties.fillOpacity ?? 1}:enable='${enable}'`
+          `drawbox=x=${x}:y=${y}:w=${width}:h=${height}:color=${color}@${opacity}:thickness=fill:enable='${enable}'`
         );
       }
 
       if (shape.text?.content) {
         filters.push(
-          `drawtext=text='${shape.text.content.replace(/'/g, "\\'")}':x=${x + 10}:y=${y + 10}:fontsize=${shape.text.fontSize || 24}:fontcolor=${shape.text.fontColor || 'white'}:enable='${enable}'`
+          `drawtext=text='${shape.text.content.replace(/'/g, "\\'")}':x=${x + 10}:y=${y + 10}:fontsize=${shape.text.fontSize || 24}:fontcolor=${toFFmpegColor(shape.text.fontColor) || 'white'}:enable='${enable}'`
         );
       }
     }

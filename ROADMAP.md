@@ -141,7 +141,16 @@
 - [x] **ShapesPanel** (`frontend/src/components/ShapesPanel.jsx`)
   - [x] Botón "Agregar recuadro" (agrega con posición/tamaño default, se reposiciona en canvas)
   - [ ] Inspector de propiedades:
-    - [ ] Color de relleno + opacidad slider (fijo en código, sin UI todavía)
+    - [x] Color de relleno + opacidad slider — inspector inline por shape (solo tipo "box";
+          "blur"/censura es siempre negro sólido por diseño). **Bug real encontrado y
+          arreglado probando esto**: `drawbox` de FFmpeg no tiene parámetro `alpha` propio
+          (a diferencia de `drawtext`) — pasarlo como opción separada daba
+          `Option not found` y abortaba el render ENTERO en cuanto había un shape tipo "box"
+          con opacidad. Nunca se había detectado porque solo se probó tipo "blur" antes (no
+          usa alpha). Fix: opacidad pegada al color con `@` (`0xff0000@0.7`). Verificado
+          extrayendo un frame del render real: recuadro rojo, posición/tamaño exactos, 70%
+          opacidad visible. También se corrigió el formato de color: `<input type="color">`
+          da `#RRGGBB`, FFmpeg necesita `0xRRGGBB`.
     - [ ] Borde: color, grosor, estilo (no implementado)
     - [ ] Sombra: offset, blur, color (no implementado)
     - [ ] Esquinas redondeadas (no implementado)

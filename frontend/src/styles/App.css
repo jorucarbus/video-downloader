@@ -194,12 +194,45 @@ body {
   font-size: 13px;
 }
 
-.shapes-list li,
 .stickers-list li {
   display: flex;
   justify-content: space-between;
   padding: 4px 0;
   border-bottom: 1px solid #2a2a2a;
+}
+
+.shape-item {
+  padding: 4px 0;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.shape-item-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.shape-item-inspector {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  align-items: center;
+  font-size: 12px;
+  color: #999;
+}
+
+.shape-item-inspector label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.shape-item-inspector input[type='color'] {
+  width: 28px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid #444;
+  background: transparent;
+  cursor: pointer;
 }
 
 .preview-video-mini {
