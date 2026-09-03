@@ -14,9 +14,9 @@ Repo clonado en **`E:\claude pro apps\video-downloader`** — **no en D:** (ver 
 | Fase | Estado |
 |---|---|
 | Phase 1 (Core Infra) | ✅ Completa y verificada (descarga, render, batch refine contra Drive real) |
-| Phase 2 (Editor) | 🟡 Parcial — preview funciona (fix reciente), timeline/canvas/effects básicos ok |
-| Phase 3 (Shapes/Censura) | 🟡 Backend listo y verificado (blur+drawtext), drag-to-position en canvas pendiente |
-| Phase 4 (IA — Whisper/Gemini) | ✅ Completa y verificada (Whisper transcribe, Gemini detecta cambios de tema) |
+| Phase 2 (Editor) | 🟡 Preview + drag-to-position de shapes verificados; falta resize, fullscreen |
+| Phase 3 (Shapes/Censura) | ✅ Completa y verificada (blur+drawtext backend, drag-to-position en canvas) |
+| Phase 4 (IA — Whisper/Gemini) | ✅ Completa y verificada (Whisper transcribe, Gemini detecta cambios de tema, UI de aprobar/rechazar/editar/preview) |
 | Phase 5 (Orientación H→V) | ✅ Completa y verificada (face-service + detect-face end-to-end) |
 | Phase 6 (Export/Storage) | ✅ Completa y verificada (upload-drive, export-local, recent-exports) |
 | Phase 7 (Electron/Deploy) | 🔴 Sin empezar — Electron GUI sin probar a propósito, Railway sin desplegar a propósito |
@@ -34,6 +34,8 @@ Detalle completo, con qué se verificó y cómo, en **[ROADMAP.md](./ROADMAP.md)
 ~~Créditos OpenAI agotados~~ — **resuelto 2026-09-03**, Whisper+Gemini verificados funcionando.
 ~~TikTok bloqueado por anti-bot~~ — **resuelto 2026-09-03**, instalar Deno lo destraba (ver
 Requisitos) — verificado con descarga real vía la API de la app.
+~~Drag-to-position de recuadros~~ — **resuelto 2026-09-03**, verificado en Browser pane real.
+~~UI de citas (aprobar/rechazar/editar/preview)~~ — **resuelto 2026-09-03**, verificado igual.
 
 ---
 
@@ -335,17 +337,21 @@ orquesta.
 ---
 
 **Última actualización**: 2026-09-03
-**Status**: 🟢 Phase 1/4/5/6 verificadas end-to-end · 🟢 TikTok descarga real funcionando · 🔴 YouTube bloqueado por anti-bot · 🟡 Electron sin probar
+**Status**: 🟢 Phase 1/3/4/5/6 verificadas end-to-end · 🟢 TikTok descarga real funcionando · 🔴 YouTube bloqueado por anti-bot · 🟡 Electron sin probar
 
 ---
 
 ### 🚀 Próximas acciones (en orden de prioridad)
 
+**Necesitan acción tuya (no se puede seguir sin esto):**
 - [ ] Exportar `cookies.txt` de YouTube (extensión de navegador, sesión logueada) para
-      resolver la descarga de YouTube — no se puede automatizar más sin esto
-- [ ] Probar Electron (ventana visible, necesita supervisión del usuario)
-- [ ] UI de aprobar/rechazar/editar citas en `AIAnalyzer.jsx` (backend ya funciona, falta
-      interacción — hoy solo lista resultados)
-- [ ] Drag-to-position de recuadros directo en el canvas (hoy son inputs numéricos)
-- [ ] Merge `feature/phase1-core-infra` → `main` cuando el usuario confirme que todo funciona
+      resolver la descarga de YouTube
+- [ ] Probar Electron (ventana visible, necesita supervisión)
+- [ ] Merge `feature/phase1-core-infra` → `main` cuando confirmes que todo funciona
 - [ ] Decidir despliegue a Railway (backend orquesta; yt-dlp/face-service quedan locales)
+
+**Se puede seguir avanzando solo (sin bloqueos):**
+- [ ] Resize de recuadros arrastrando esquinas (hoy solo se pueden mover, no cambiar tamaño)
+- [ ] Inspector de color/opacidad/borde para recuadros (hoy son valores fijos en código)
+- [ ] Mostrar resolución + orientación actual en Canvas (dato ya disponible en `metadata`)
+- [ ] Timeout de 10 min en `render-final` (no implementado explícitamente)
