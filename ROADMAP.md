@@ -176,14 +176,20 @@
 **Objetivo**: Análisis de audio + sugerencias de citas
 
 ### Components
-- [ ] **AIAnalyzer** (`frontend/src/components/AIAnalyzer.jsx`)
-  - [ ] Botón "Analizar Audio & Sugerir Citas"
-  - [ ] Spinner mientras procesa
-  - [ ] Lista de sugerencias:
-    - [ ] `[00:05-00:12]` Frase sugerida
-    - [ ] Botones: Aprobar, Rechazar, Editar
-    - [ ] Timeline scrubber para previewizar cada cita
-  - [ ] Panel para refinar timestamps
+- [x] **AIAnalyzer** (`frontend/src/components/AIAnalyzer.jsx`) — **verificado end-to-end
+      2026-09-03** con video real (voz TTS, 2 frases con cambio de tema deliberado) vía UI real
+      en Browser pane, no solo curl
+  - [x] Botón "Analizar Audio & Sugerir Citas"
+  - [x] Spinner mientras procesa (`{loading ? 'Analizando...' : ...}`)
+  - [x] Lista de sugerencias:
+    - [x] `[00:05-00:12]` Frase sugerida — formato exacto verificado (`[00:00-00:03]`)
+    - [x] Botones: Aprobar, Rechazar, Editar — los 3 verificados con clicks reales, estado
+          visual correcto (borde verde/rojo, opacidad)
+    - [x] Timeline scrubber para previewizar cada cita — mini `<video>` con `previewUrl`
+          (reusa el fix de `/media/*`), seek a `start_time`, auto-pausa en `end_time`,
+          verificado: reprodujo y se detuvo exacto
+  - [x] Panel para refinar timestamps — inputs numéricos + textarea de la cita, verificado
+        editando `start_time` y confirmando que el cambio se refleja en la vista normal
 
 ### Backend
 - [x] **Whisper integration** (`backend/lib/whisper.js`) — **verificado end-to-end 2026-09-03**
@@ -216,10 +222,12 @@ farandula-video-generator — evita fijar un nombre de modelo versionado que Goo
 2. Whisper transcribe con timestamps exactos ✓
 3. Gemini sugiere 2 citas con rangos coherentes ✓
 4. Gemini detecta el cambio de tema correctamente ✓
-5. Ajusta timestamps manualmente — pendiente (UI no implementada, `/api/refine-cites` no existe)
+5. Ajusta timestamps manualmente ✓ (verificado 2026-09-03, UI real en Browser pane)
+6. Aprobar/Rechazar cambia estado visual ✓
+7. Previsualizar reproduce el rango exacto y se detiene solo ✓
 
-**Fin de Phase**: Backend de IA funcional y verificado. Falta UI de aprobar/rechazar/editar citas
-en `AIAnalyzer.jsx` (hoy solo dispara el análisis y lista resultados, sin interacción).
+**Fin de Phase**: ✅ **Completa.** Backend y UI de IA funcionan y están verificados end-to-end,
+incluida la interacción completa (aprobar/rechazar/editar/previsualizar cada cita).
 
 ---
 

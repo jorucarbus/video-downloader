@@ -148,3 +148,66 @@ body {
   padding: 4px 0;
   border-bottom: 1px solid #2a2a2a;
 }
+
+.preview-video-mini {
+  width: 100%;
+  max-height: 160px;
+  background: #000;
+  margin: 8px 0;
+}
+
+.cite-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #2a2a2a;
+  border-left: 3px solid transparent;
+  padding-left: 8px;
+}
+
+.cite-item.cite-approved {
+  border-left-color: #2f8f2f;
+}
+
+.cite-item.cite-rejected {
+  border-left-color: #a33;
+  opacity: 0.5;
+}
+
+.cite-edit-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.cite-edit-row input[type='number'] {
+  width: 70px;
+}
+
+.cite-edit-row textarea {
+  flex: 1 1 100%;
+  min-height: 50px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  color: #eee;
+  border-radius: 4px;
+  padding: 6px;
+}
+
+.cite-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.cite-actions button {
+  padding: 4px 8px;
+  font-size: 12px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+}
+
+.cite-actions button.active {
+  background: #3a7bd5;
+  border-color: #3a7bd5;
+}

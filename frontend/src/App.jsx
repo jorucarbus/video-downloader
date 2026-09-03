@@ -60,7 +60,7 @@ export default function App() {
           />
           <ShapesPanel edits={edits} onAddShape={addShape} onRemoveShape={removeShape} />
           <StickersPanel edits={edits} onAddSticker={addSticker} onRemoveSticker={removeSticker} />
-          <AIAnalyzer videoPath={videoPath} />
+          <AIAnalyzer videoPath={videoPath} previewUrl={previewUrl} />
           <OrientationConverter videoPath={videoPath} onUpdateCrop={updateCrop} />
           <ExportDialog videoPath={videoPath} edits={edits} />
         </main>
