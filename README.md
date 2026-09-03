@@ -6,7 +6,7 @@ Pensada para alimentar las carpetas de **Farándula** (famosos, citas, adicional
 
 ---
 
-## 🚦 Estado actual (2026-09-02)
+## 🚦 Estado actual (2026-09-03)
 
 **Rama activa: `feature/phase1-core-infra`** (no mergeada a `main` todavía).
 Repo clonado en **`E:\claude pro apps\video-downloader`** — **no en D:** (ver sección Troubleshooting, exFAT rompe symlinks de npm workspaces).
@@ -24,14 +24,16 @@ Repo clonado en **`E:\claude pro apps\video-downloader`** — **no en D:** (ver 
 Detalle completo, con qué se verificó y cómo, en **[ROADMAP.md](./ROADMAP.md)**.
 
 ### 🔴 Bloqueado, necesita acción humana
-1. **YouTube/TikTok bloquean la descarga por anti-bot** — yt-dlp actualizado no alcanza, necesita
-   cookies de sesión real (`--cookies-from-browser` falla con DPAPI si el navegador está abierto:
-   cerrarlo primero, o exportar cookies a archivo Netscape).
+1. **YouTube bloquea la descarga por anti-bot** — necesita `cookies.txt` exportado a mano desde
+   un navegador logueado en YouTube (extensión "Get cookies.txt LOCALLY"), ya que
+   `--cookies-from-browser` falla por la App-Bound Encryption de Chromium en Edge/Chrome, y el
+   perfil de Firefox disponible no está logueado. Ver Troubleshooting.
 2. **Electron (GUI)** — nunca lanzado en esta máquina a propósito (evitar abrir ventana visible
    sin supervisión). Backend/frontend web sí están 100% probados.
 
-~~Créditos OpenAI agotados~~ — **resuelto 2026-09-03**, cuenta recargada, Whisper+Gemini
-verificados funcionando (de paso se arregló un modelo de Gemini retirado por Google, ver ROADMAP).
+~~Créditos OpenAI agotados~~ — **resuelto 2026-09-03**, Whisper+Gemini verificados funcionando.
+~~TikTok bloqueado por anti-bot~~ — **resuelto 2026-09-03**, instalar Deno lo destraba (ver
+Requisitos) — verificado con descarga real vía la API de la app.
 
 ---
 
@@ -57,8 +59,8 @@ Drive (carpeta con videos ya publicados)
 
 ### ✨ Features Clave
 
-- ✅ **Descarga universal**: cualquier URL con video (yt-dlp) — verificado con URL directa;
-  YouTube/TikTok bloqueados por anti-bot, ver arriba
+- ✅ **Descarga universal**: cualquier URL con video (yt-dlp) — verificado con URL directa y
+  **TikTok real**; YouTube sigue bloqueado por anti-bot, ver arriba
 - ✅ **Editor visual**:
   - Timeline para recortar audio/video
   - Canvas con preview real (HTTP, no `file://`) + efectos (brillo/contraste/saturación)
@@ -98,6 +100,8 @@ Drive (carpeta con videos ya publicados)
 - Git
 - Python 3.11+ (para `face-service/`, opcional si no usas H→V automático)
 - yt-dlp instalado (`pip install yt-dlp`) — ver nota de PATH abajo
+- **Deno** instalado (`winget install DenoLand.Deno`, o [deno.com](https://deno.com)) — yt-dlp lo
+  usa como runtime JS para resolver el challenge anti-bot de TikTok. Sin esto, TikTok falla.
 - Credenciales OAuth de Google (client ID/secret/refresh token) con acceso a tu Drive —
   **reusa las de otro proyecto tuyo si ya tienes uno**, no hace falta un service account nuevo
 - API keys: `GEMINI_API_KEY`, `OPENAI_API_KEY`
@@ -273,13 +277,19 @@ Ya arreglado (2026-09-02) — si ves esto en una rama vieja, falta el fix de `pr
 No está en el PATH. Encuentra la ruta real (`pip show yt-dlp` no la da directo — busca en
 `site-packages/../Scripts/yt-dlp.exe` en Windows) y ponla en `YTDLP_PATH` del `.env`.
 
-### YouTube da 429 / "Sign in to confirm you're not a bot"
-Anti-bot de YouTube, no depende de la versión de yt-dlp. Necesita cookies de sesión:
-`--cookies-from-browser edge` (o `chrome`) — si da error de DPAPI, cerrar el navegador primero.
+### TikTok falla con "Unexpected response" o "No supported JavaScript runtime"
+**Resuelto** — instalar Deno (`winget install DenoLand.Deno`) y tenerlo en el PATH. yt-dlp lo usa
+para resolver el challenge JS de TikTok. `curl_cffi` (`pip install curl_cffi`) ayuda pero Deno es
+lo que realmente lo destraba — verificado con descarga real vía la API de la app.
 
-### TikTok falla con "Unexpected response from webpage request"
-Necesita `curl_cffi` (`pip install curl_cffi`) para impersonar TLS. Aun con eso puede fallar en
-videos puntuales — sin causa raíz confirmada todavía, pendiente de más pruebas.
+### YouTube da 429 / "Sign in to confirm you're not a bot"
+**No resuelto todavía.** No es solo cookies: incluso con cookies válidas (Firefox, que es el
+único navegador del que yt-dlp puede extraerlas sin error) YouTube pide un "Visitor Data"/PO
+Token de sesión real y logueada. **Edge/Chrome dan `Failed to decrypt with DPAPI`** — no es
+porque el navegador esté abierto, es la App-Bound Encryption de Chromium (~2024), sin bypass
+limpio por CLI. Camino real: exportar `cookies.txt` a mano con una extensión tipo "Get
+cookies.txt LOCALLY" desde una sesión de Chrome/Edge logueada en YouTube, y pasarla con
+`--cookies cookies.txt` en vez de `--cookies-from-browser`.
 
 ### face-service: `AttributeError: module 'mediapipe' has no attribute 'solutions'`
 La API legacy de MediaPipe no existe en las versiones disponibles para Python 3.13+. Usar
@@ -325,13 +335,14 @@ orquesta.
 ---
 
 **Última actualización**: 2026-09-03
-**Status**: 🟢 Phase 1/4/5/6 verificadas end-to-end · 🔴 YouTube/TikTok bloqueados por anti-bot · 🟡 Electron sin probar
+**Status**: 🟢 Phase 1/4/5/6 verificadas end-to-end · 🟢 TikTok descarga real funcionando · 🔴 YouTube bloqueado por anti-bot · 🟡 Electron sin probar
 
 ---
 
 ### 🚀 Próximas acciones (en orden de prioridad)
 
-- [ ] Cerrar navegador → extraer cookies → probar descarga real de YouTube/TikTok
+- [ ] Exportar `cookies.txt` de YouTube (extensión de navegador, sesión logueada) para
+      resolver la descarga de YouTube — no se puede automatizar más sin esto
 - [ ] Probar Electron (ventana visible, necesita supervisión del usuario)
 - [ ] UI de aprobar/rechazar/editar citas en `AIAnalyzer.jsx` (backend ya funciona, falta
       interacción — hoy solo lista resultados)

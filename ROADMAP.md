@@ -60,11 +60,22 @@
 - [x] Frontend renderiza los 8 paneles sin errores de consola (verificado 2026-09-01)
 - [x] Descargar video real (URL directa) → archivo en disco + metadata correcta vía FFprobe
       (verificado 2026-09-01: 5.76s, 1920x1080, 30fps)
-- [ ] Descargar de YouTube/TikTok específicamente — bloqueado por anti-bot de las plataformas
-      (429 en YouTube, error de extracción en TikTok pese a curl_cffi instalado). yt-dlp
-      actualizado a la última versión, no resuelve. Pendiente: cookies de sesión válidas
-      (`--cookies-from-browser` falló por DPAPI con el navegador abierto — cerrar navegador
-      y reintentar, o exportar cookies a archivo Netscape)
+- [x] **Descargar de TikTok — RESUELTO 2026-09-03**: faltaba un runtime JS (yt-dlp lo pide
+      explícitamente en el error: "No supported JavaScript runtime"). Instalado **Deno**
+      (`winget install DenoLand.Deno`) — TikTok resuelve su challenge JS solo con Deno en el
+      PATH, sin cookies ni curl_cffi. **Verificado vía la API real de la app**
+      (`POST /api/download`), no solo CLI: video real descargado, 10.6s, 720x1280 vertical,
+      metadata correcta. Requisito nuevo documentado en README (Deno debe estar instalado).
+- [ ] **YouTube sigue bloqueado** — no es solo cookies. Con cookies de Firefox (las únicas
+      extraíbles sin error, ver abajo) YouTube pide además un "Visitor Data"/PO Token de sesión
+      real y logueada — el perfil de Firefox disponible en esta máquina no está logueado en
+      YouTube. **Edge/Chrome dan `Failed to decrypt with DPAPI`** incluso con el navegador
+      cerrado — no es el problema de "navegador abierto" que se pensó antes, es la App-Bound
+      Encryption que Chromium introdujo (~2024) para cookies, sin salida limpia por CLI.
+      **Camino real pendiente**: usar una extensión de navegador tipo "Get cookies.txt LOCALLY"
+      para exportar cookies.txt manualmente desde una sesión de Chrome/Edge SÍ logueada en
+      YouTube (bypassa DPAPI porque la extensión lee cookies ya desencriptadas dentro del
+      navegador) — requiere acción del usuario, no se puede automatizar más desde acá.
 - [x] Renderizar video con ediciones (trim + effects) → MP4 válido H264/AAC, duración exacta
       (verificado 2026-09-01: recorte 0.5s→4s dio 3.500000s exacto)
 - [x] **Batch refine end-to-end contra Drive real** (verificado 2026-09-02): carpeta temporal →
