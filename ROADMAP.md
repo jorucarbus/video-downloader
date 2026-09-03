@@ -322,7 +322,9 @@ FaceDetector`), que requiere descargar un modelo `.tflite` aparte (instrucciones
 - [x] `POST /api/render-final` — renderizado completo (verificado, ver Phase 1)
   - [x] Aplicar ediciones (trim, effects, shapes) — verificado; crop aún sin probar aislado
   - [x] Codificar a MP4 (libx264 — h264_nvenc listado como fallback en código, sin probar GPU)
-  - [ ] Timeout 10 minutos (no implementado explícitamente aún)
+  - [x] Timeout 10 minutos — `setTimeout` mata el proceso ffmpeg (`SIGKILL`) y marca el job
+        como `failed` si excede el límite; verificado que no interfiere con renders normales
+        (completado en segundos, `clearTimeout` correcto, sin falso positivo)
 
 - [x] `POST /api/upload-drive` — subir a Google Drive (llamado `upload-drive`, no
       `export-to-drive` como decía el plan original) — **verificado 2026-09-02**: subida real,

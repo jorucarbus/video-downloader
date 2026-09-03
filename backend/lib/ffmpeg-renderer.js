@@ -14,6 +14,8 @@ const TEMP_DIR = path.join(__dirname, '..', 'temp-videos');
 // jobs en memoria (suficiente para MVP, sin DB)
 export const renderJobs = new Map();
 
+const RENDER_TIMEOUT_MS = 10 * 60 * 1000; // 10 min — evita procesos ffmpeg colgados indefinidamente
+
 /**
  * Construye el filter_complex de FFmpeg a partir de edits.
  * Soporta: crop, effects (brightness/contrast/saturation),
@@ -93,6 +95,18 @@ export async function renderVideo(inputPath, edits = {}) {
   }
   outputOptions.push('-c:v', 'libx264'); // fallback CPU; h264_nvenc si hay GPU disponible
 
+  const timeoutHandle = setTimeout(() => {
+    const job = renderJobs.get(jobId);
+    if (job?.status === 'rendering') {
+      cmd.kill('SIGKILL');
+      renderJobs.set(jobId, {
+        status: 'failed',
+        progress: 0,
+        error: `Render excedió el límite de ${RENDER_TIMEOUT_MS / 60000} minutos, abortado`,
+      });
+    }
+  }, RENDER_TIMEOUT_MS);
+
   cmd
     .outputOptions(outputOptions)
     .output(outputPath)
@@ -101,9 +115,15 @@ export async function renderVideo(inputPath, edits = {}) {
       if (job) job.progress = Math.min(99, Math.round(p.percent || 0));
     })
     .on('end', () => {
+      clearTimeout(timeoutHandle);
       renderJobs.set(jobId, { status: 'completed', progress: 100, outputPath });
     })
     .on('error', (err) => {
+      clearTimeout(timeoutHandle);
+      // Con SIGKILL por timeout, fluent-ffmpeg también dispara 'error' — no pisar
+      // el estado 'failed' con el mensaje de error del timeout ya seteado arriba.
+      const job = renderJobs.get(jobId);
+      if (job?.error?.includes('límite')) return;
       renderJobs.set(jobId, { status: 'failed', progress: 0, error: err.message });
     })
     .run();
