@@ -16,7 +16,7 @@ Repo clonado en **`E:\claude pro apps\video-downloader`** — **no en D:** (ver 
 | Phase 1 (Core Infra) | ✅ Completa y verificada (descarga, render, batch refine contra Drive real) |
 | Phase 2 (Editor) | 🟡 Parcial — preview funciona (fix reciente), timeline/canvas/effects básicos ok |
 | Phase 3 (Shapes/Censura) | 🟡 Backend listo y verificado (blur+drawtext), drag-to-position en canvas pendiente |
-| Phase 4 (IA — Whisper/Gemini) | 🔴 **Bloqueada: cuenta OpenAI sin créditos**, código listo |
+| Phase 4 (IA — Whisper/Gemini) | ✅ Completa y verificada (Whisper transcribe, Gemini detecta cambios de tema) |
 | Phase 5 (Orientación H→V) | ✅ Completa y verificada (face-service + detect-face end-to-end) |
 | Phase 6 (Export/Storage) | ✅ Completa y verificada (upload-drive, export-local, recent-exports) |
 | Phase 7 (Electron/Deploy) | 🔴 Sin empezar — Electron GUI sin probar a propósito, Railway sin desplegar a propósito |
@@ -24,14 +24,14 @@ Repo clonado en **`E:\claude pro apps\video-downloader`** — **no en D:** (ver 
 Detalle completo, con qué se verificó y cómo, en **[ROADMAP.md](./ROADMAP.md)**.
 
 ### 🔴 Bloqueado, necesita acción humana
-1. **Créditos OpenAI agotados** (`credit_balance_exhausted`) — recargar en
-   [platform.openai.com/settings/organization/billing](https://platform.openai.com/settings/organization/billing/)
-   para poder probar Whisper/Gemini (Phase 4).
-2. **YouTube/TikTok bloquean la descarga por anti-bot** — yt-dlp actualizado no alcanza, necesita
+1. **YouTube/TikTok bloquean la descarga por anti-bot** — yt-dlp actualizado no alcanza, necesita
    cookies de sesión real (`--cookies-from-browser` falla con DPAPI si el navegador está abierto:
    cerrarlo primero, o exportar cookies a archivo Netscape).
-3. **Electron (GUI)** — nunca lanzado en esta máquina a propósito (evitar abrir ventana visible
+2. **Electron (GUI)** — nunca lanzado en esta máquina a propósito (evitar abrir ventana visible
    sin supervisión). Backend/frontend web sí están 100% probados.
+
+~~Créditos OpenAI agotados~~ — **resuelto 2026-09-03**, cuenta recargada, Whisper+Gemini
+verificados funcionando (de paso se arregló un modelo de Gemini retirado por Google, ver ROADMAP).
 
 ---
 
@@ -44,7 +44,7 @@ URL (YouTube, TikTok, IG, etc.)
         ↓
    [EDITAR] → Timeline + Canvas + Formas/Censura + Stickers + Efectos
         ↓
-  [IA ANALIZA] → Whisper (transcribe) + Gemini (sugiere citas)      [bloqueado, sin créditos]
+  [IA ANALIZA] → Whisper (transcribe) + Gemini (sugiere citas)
         ↓
 [EXPORTAR] → MP4 → Drive + Local
 
@@ -65,7 +65,8 @@ Drive (carpeta con videos ya publicados)
   - **Recuadros/censura** (blur, bloque opaco) sincronizados con timeline
   - **Stickers PNG fijos** (overlay manual, **sin tracking de puntos** — descartado por costo,
     ver ARCHITECTURE.md)
-- 🔴 **IA análisis de audio** (Whisper + Gemini) — código listo, bloqueado por créditos OpenAI
+- ✅ **IA análisis de audio** (Whisper + Gemini) — verificado con audio real, transcripción con
+  timestamps exactos y detección de cambios de tema correcta
 - ✅ **Conversión H→V automática**: face-service local (MediaPipe) detecta rostro y centra el
   crop — corre en tu máquina (RTX 3070 / Mac Studio M2 Ultra), nunca en Railway
 - ✅ **Almacenamiento dual**: Google Drive (OAuth) + local (filesystem, sin DB)
@@ -289,7 +290,13 @@ API nueva (`FaceDetector`), que requiere el modelo `.tflite` (ver Quick Start pa
 Probablemente NO es un bug de red — el SDK oficial de OpenAI cierra la conexión abruptamente
 cuando la cuenta no tiene créditos, en vez de devolver el error 429 limpio. Probar con
 axios+form-data para ver el mensaje real, o simplemente revisar el balance de la cuenta en
-platform.openai.com.
+platform.openai.com. Confirmado como causa real el 2026-09-02; recargar créditos lo resuelve.
+
+### Gemini da `404 Not Found` sobre un modelo (ej. `gemini-1.5-pro`)
+Google retira modelos con el tiempo. Usar alias auto-actualizables (`gemini-flash-latest`,
+`gemini-pro-latest`) en vez de nombres versionados fijos — `gemini.js` ya usa este patrón con
+fallback a `gemini-3.5-flash`. Si vuelve a pasar, correr el listado de modelos disponibles:
+`GET https://generativelanguage.googleapis.com/v1beta/models?key=$GEMINI_API_KEY`.
 
 ### FFmpeg no se ejecuta en Railway / Descarga lenta en Railway
 Sin desplegar todavía a propósito (ver "Estado actual"). Cuando se despliegue: yt-dlp y
@@ -317,16 +324,17 @@ orquesta.
 
 ---
 
-**Última actualización**: 2026-09-02
-**Status**: 🟢 Phase 1/5/6 verificadas end-to-end · 🔴 Phase 4 bloqueada por créditos OpenAI · 🟡 Electron sin probar
+**Última actualización**: 2026-09-03
+**Status**: 🟢 Phase 1/4/5/6 verificadas end-to-end · 🔴 YouTube/TikTok bloqueados por anti-bot · 🟡 Electron sin probar
 
 ---
 
 ### 🚀 Próximas acciones (en orden de prioridad)
 
-- [ ] **Recargar créditos OpenAI** → probar Whisper/Gemini real (Phase 4)
 - [ ] Cerrar navegador → extraer cookies → probar descarga real de YouTube/TikTok
 - [ ] Probar Electron (ventana visible, necesita supervisión del usuario)
+- [ ] UI de aprobar/rechazar/editar citas en `AIAnalyzer.jsx` (backend ya funciona, falta
+      interacción — hoy solo lista resultados)
 - [ ] Drag-to-position de recuadros directo en el canvas (hoy son inputs numéricos)
 - [ ] Merge `feature/phase1-core-infra` → `main` cuando el usuario confirme que todo funciona
 - [ ] Decidir despliegue a Railway (backend orquesta; yt-dlp/face-service quedan locales)
