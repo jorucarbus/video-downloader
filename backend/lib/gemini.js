@@ -9,13 +9,31 @@ function getClient() {
   return genAI;
 }
 
+// Alias que Google mantiene apuntando al modelo flash estable más reciente —
+// evita fijar un nombre versionado que Google puede retirar (pasó con
+// gemini-1.5-pro, 404 desde esta cuenta el 2026-09-02). gemini-3.5-flash como
+// fallback fijo por si el alias mismo llega a fallar.
+const MODELOS = ['gemini-flash-latest', 'gemini-3.5-flash'];
+
+async function generarConFallback(prompt) {
+  let lastErr;
+  for (const modelo of MODELOS) {
+    try {
+      const model = getClient().getGenerativeModel({ model: modelo });
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  throw lastErr;
+}
+
 /**
  * Analiza transcripción y sugiere fragmentos de "cita" (5-20s c/u).
  * @param {Array<{time:number,text:string,duration:number}>} transcription
  */
 export async function suggestCites(transcription, language = 'es') {
-  const model = getClient().getGenerativeModel({ model: 'gemini-1.5-pro' });
-
   const prompt = `Analiza esta transcripción de video y sugiere fragmentos de "cita" (5-20 segundos cada uno).
 
 Transcripción con timestamps:
@@ -36,8 +54,7 @@ Responde SOLO con JSON válido, este formato exacto:
   }
 ]`;
 
-  const result = await model.generateContent(prompt);
-  const responseText = result.response.text();
+  const responseText = await generarConFallback(prompt);
   const jsonMatch = responseText.match(/\[[\s\S]*\]/);
 
   if (!jsonMatch) throw new Error('Gemini no devolvió JSON válido');

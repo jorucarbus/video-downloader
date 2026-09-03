@@ -175,45 +175,40 @@
   - [ ] Panel para refinar timestamps
 
 ### Backend
-- [x] **Whisper integration** (`backend/lib/whisper.js`) — código completo, llamada real a la
-      API confirmada llegando (no es bug de conexión)
+- [x] **Whisper integration** (`backend/lib/whisper.js`) — **verificado end-to-end 2026-09-03**
+      con audio TTS real (4 frases, incl. cambio de tema deliberado)
   - [x] Extraer audio del video con FFmpeg (Whisper acepta el archivo directo, sin extracción
         previa necesaria para wav/mp3)
   - [x] Llamar API OpenAI Whisper
-  - [ ] Retornar transcripción con timestamps — **sin verificar contenido real**, ver bloqueo abajo
+  - [x] Retornar transcripción con timestamps — 4 segmentos, timestamps y duración exactos
 
-- [x] **Gemini integration** (`backend/lib/gemini.js`) — código completo, sin probar en vivo
-      (depende de tener una transcripción real primero, bloqueado por Whisper)
-  - [ ] Analizar transcripción
-  - [ ] Detectar cambios de tema
-  - [ ] Sugerir fragmentos interesantes (5-20s)
-  - [ ] Retornar JSON con citas
+- [x] **Gemini integration** (`backend/lib/gemini.js`) — **verificado end-to-end 2026-09-03**
+  - [x] Analizar transcripción
+  - [x] Detectar cambios de tema — identificó correctamente el cambio de tema deliberado en
+        la prueba ("Ahora vamos a hablar de otro tema completamente distinto")
+  - [x] Sugerir fragmentos interesantes (5-20s) — 2 citas sugeridas, rangos coherentes
+  - [x] Retornar JSON con citas — parseo correcto
 
 - [x] Rutas API:
-  - [x] `POST /api/analyze-audio` — código listo, bloqueado en pruebas por cuenta OpenAI sin
-        créditos (ver abajo)
-  - [ ] `POST /api/refine-cites` — usuario ajusta timestamps
+  - [x] `POST /api/analyze-audio` — **verificado**, transcripción real correcta
+  - [ ] `POST /api/refine-cites` — usuario ajusta timestamps (no implementado)
 
-⚠️ **BLOQUEADO (2026-09-02): cuenta OpenAI sin créditos.** `client.audio.transcriptions.create()`
-del SDK oficial daba `ECONNRESET` consistente en este entorno (Windows, Node 24) — probado con
-stream y con buffer, mismo resultado. Cambiando a `axios` + `form-data` (bypass del SDK) la
-llamada SÍ llega a la API y revela la causa real:
-`{"error":{"code":"credit_balance_exhausted","message":"You have no credits remaining..."}}`.
-**No es bug de código** — la cuenta de OpenAI (la del `OPENAI_API_KEY` en `.env`) necesita
-recarga en https://platform.openai.com/settings/organization/billing/. El SDK oficial
-probablemente cierra la conexión abruptamente al recibir el 429 en vez de devolver el body
-JSON del error (posible bug del SDK con fetch nativo en este entorno, pero irrelevante ahora
-que se sabe la causa real). **Una vez recargada la cuenta**, reintentar
-`POST /api/analyze-audio` — el resto de la cadena (extracción, llamada, parseo) está lista.
+✅ **RESUELTO (2026-09-03): créditos OpenAI recargados por el usuario.** El bloqueo de
+`credit_balance_exhausted` documentado el 2026-09-02 se resolvió — Whisper y Gemini funcionan
+correctamente. De paso se encontró y arregló un segundo bug real: `gemini.js` tenía hardcodeado
+el modelo `gemini-1.5-pro`, que Google retiró (`404 Not Found`). Cambiado a `gemini-flash-latest`
+con fallback a `gemini-3.5-flash` (alias auto-actualizable, mismo patrón que usa
+farandula-video-generator — evita fijar un nombre de modelo versionado que Google puede retirar).
 
 ### Testing
-1. Video 2 minutos con cambios de tema ✓
-2. Botón "Analizar" → procesa 30-45s ✓
-3. Muestra 5-8 sugerencias de citas ✓
-4. Usuario aprecia calidad de sugerencias ✓
-5. Ajusta timestamps manualmente ✓
+1. Audio con cambio de tema deliberado ✓ (verificado 2026-09-03)
+2. Whisper transcribe con timestamps exactos ✓
+3. Gemini sugiere 2 citas con rangos coherentes ✓
+4. Gemini detecta el cambio de tema correctamente ✓
+5. Ajusta timestamps manualmente — pendiente (UI no implementada, `/api/refine-cites` no existe)
 
-**Fin de Phase**: IA funcional, usuario obtiene sugerencias útiles
+**Fin de Phase**: Backend de IA funcional y verificado. Falta UI de aprobar/rechazar/editar citas
+en `AIAnalyzer.jsx` (hoy solo dispara el análisis y lista resultados, sin interacción).
 
 ---
 
