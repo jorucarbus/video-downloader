@@ -45,6 +45,39 @@ function ShapeOverlay({ shape, scale, containerRef, onUpdatePosition, onRemove }
     window.addEventListener('mouseup', handleMouseUp);
   };
 
+  const handleResizeMouseDown = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const resizeRef = {
+      startX: e.clientX,
+      startY: e.clientY,
+      origWidth: shape.properties.width,
+      origHeight: shape.properties.height,
+    };
+
+    const handleMouseMove = (moveEvent) => {
+      const dxScreen = moveEvent.clientX - resizeRef.startX;
+      const dyScreen = moveEvent.clientY - resizeRef.startY;
+      const dx = dxScreen / scale;
+      const dy = dyScreen / scale;
+      const container = containerRef.current;
+      const maxWidth = container ? container.clientWidth / scale - shape.properties.x : Infinity;
+      const maxHeight = container ? container.clientHeight / scale - shape.properties.y : Infinity;
+      onUpdatePosition(shape.id, {
+        width: Math.max(10, Math.min(maxWidth, resizeRef.origWidth + dx)),
+        height: Math.max(10, Math.min(maxHeight, resizeRef.origHeight + dy)),
+      });
+    };
+
+    const handleMouseUp = () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
+
   const { x, y, width, height } = shape.properties;
 
   return (
@@ -68,6 +101,11 @@ function ShapeOverlay({ shape, scale, containerRef, onUpdatePosition, onRemove }
       >
         ✕
       </button>
+      <div
+        className="shape-overlay-resize"
+        onMouseDown={handleResizeMouseDown}
+        title="Arrastra para redimensionar"
+      />
     </div>
   );
 }
@@ -103,6 +141,11 @@ export default function CanvasEditor({
   return (
     <div className="panel canvas-editor">
       <h3>Canvas (Crop / Efectos)</h3>
+      {metadata && (
+        <p className="canvas-meta">
+          {metadata.width}×{metadata.height} · {metadata.orientation === 'vertical' ? '📱 Vertical' : '🖥️ Horizontal'} · {metadata.fps}fps
+        </p>
+      )}
       {src ? (
         <div className="canvas-video-wrapper" ref={containerRef}>
           <video

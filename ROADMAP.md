@@ -106,7 +106,7 @@
         seek); `/api/download` y `/api/render-status` devuelven `previewUrl` junto al
         `videoPath`. Verificado en Browser real: `video.readyState=4`, dimensiones y
         duración correctas, requests `206 Partial Content` confirmando seek funcional.
-  - [ ] Mostrar resolución + orientación actual (dato ya disponible en `metadata`, falta UI)
+  - [x] Mostrar resolución + orientación actual (verificado: "1920×1080 · 🖥️ Horizontal · 30fps")
   - [ ] Botones para full-screen preview
 
 - [ ] **Effect Controls**
@@ -158,7 +158,10 @@
         `clientWidth`). Verificado: overlay en posición inicial correcta (100px reales ×
         escala = 12.8px pantalla en el viewport probado), drag de 50px/20px en pantalla movió
         el shape exactamente esa proporción en píxeles reales, con clamp a los bordes del video.
-        **Resize no implementado** (solo mover, no cambiar ancho/alto arrastrando).
+        **Resize también verificado** (2026-09-03): handle circular en la esquina
+        inferior-derecha, arrastrar cambia width/height con el mismo sistema de escala,
+        `stopPropagation` aísla correctamente resize de drag (mover no cambia tamaño y
+        viceversa, verificado que x/y quedan intactos al redimensionar).
   - [x] Delete shape — botón ✕ en el overlay mismo (además del que ya existía en la lista)
   - [x] Múltiples formas simultáneamente — el `.map()` sobre `edits.shapes` ya lo soporta,
         cada una con su propio drag handler independiente
