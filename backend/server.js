@@ -1,11 +1,13 @@
 import './env.js'; // primer import: carga .env antes que cualquier módulo lo necesite
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import apiRoutes from './routes/api.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+fs.mkdirSync(path.join(__dirname, 'temp-videos'), { recursive: true });
 const app = express();
 
 app.use(cors());
